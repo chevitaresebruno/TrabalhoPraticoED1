@@ -22,12 +22,15 @@ Patient* create_patient(int id, char* name, struct tm* birthdate) {
     /* Memory check for name */
     if (p->name == NULL) {
         perror("Failed to allocate memory for patient name");
+        free(p);
         exit(EXIT_FAILURE);
     }
 
     /* Memory Check for birthdate */
     if (p->birthdate == NULL) {
         perror("Failed to allocate memory for patient birthdate");
+        free(p->name);
+        free(p);
         exit(EXIT_FAILURE);
     }
 
