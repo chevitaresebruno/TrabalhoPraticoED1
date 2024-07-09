@@ -13,6 +13,4 @@ exam.o: exam.c exam.h
 	gcc -o exam.o exam.c -c -W -Wall -ansi -pedantic
 
 clean:
-	rm -rf *.o *~ mainFile
-
-.PHONY: all clean
+	rm -rf *.o
