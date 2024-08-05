@@ -1,3 +1,7 @@
 .vscode
 *.o
 *.exe
+*.pub
+*.txt
+
+test.c
