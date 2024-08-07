@@ -3,5 +3,8 @@
 *.exe
 *.pub
 *.txt
+*.bat
+*.sh
 
+output/
 test.c
