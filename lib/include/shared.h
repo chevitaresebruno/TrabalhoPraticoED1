@@ -1,3 +1,5 @@
+#pragma once
+
 #define IsNull(value) (value == NULL)
 #define IsNotNull(value) (value != NULL)
 

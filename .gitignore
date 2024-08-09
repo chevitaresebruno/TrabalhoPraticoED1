@@ -7,4 +7,6 @@
 *.sh
 
 output/
+tests/
+test/
 test.c

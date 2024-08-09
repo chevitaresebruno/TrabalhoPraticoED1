@@ -18,8 +18,9 @@ struct patient {
 
 
 Patient* patient_free(Patient* p, const unsigned char free_code) {
-    assert(IsNotNull(p));
-    
+    if(IsNull(p))
+        return NULL;
+        
     Patient* n = NULL;
     
     switch (free_code)

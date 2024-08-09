@@ -1,3 +1,5 @@
+#pragma once
+
 typedef struct patient Patient;
 
 enum PATIENT_FREE_CODE {DESTROY, RETURN_NEXT_AND_DESTROY, ALLOCATE_NAME_ERROR, ALLOCATE_TIMESTAMP_ERROR};
