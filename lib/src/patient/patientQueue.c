@@ -1,3 +1,7 @@
+/*
+    This file contains all important definition for correct work of pq struct. All functions in this script are explained in patientQueue.h file.
+*/
+
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
@@ -9,6 +13,13 @@
 #include "lib/include/patient/patienteQueue.h"
 
 
+/*
+    This struct is used as the header for a simply linked list.
+    attr:
+        size -> the number of elements in the queue, 0 means no elements in the queue;
+        first -> a pointer to the first patient in queue;
+        last -> a pointer to the last patient in queue.
+*/
 struct pq {
     unsigned int size;
     Patient* first;
@@ -19,13 +30,14 @@ struct pq {
 void pq_free(PatientQueue* pq) {
     Patient* p;
 
-    assert(IsNull(pq));
+    assert(IsNull(pq)); /* It can't be used in a NULL queue */
 
     p = pq->first;
 
     while (IsNotNull(p))
         p = patient_free(p, RETURN_NEXT_AND_DESTROY);
     
+    /* It check's if the queue is broken. If this occurs, the program will likely have a memory leak. */
     if(IsNotNull(pq->last)) {
         unsigned int j = 0;
         p = pq->last;
@@ -63,6 +75,7 @@ void pq_insert(PatientQueue* pq, Patient* p) {
     assert(IsNotNull(pq));
     assert(IsNotNull(p));
 
+    /* Check if the first elem not contains a patient and the last elem contains. If it's ocurr, something get worg, but i not know wat is. */
     if (pq->size) {
         if(IsNull(pq->first) && IsNotNull(pq->last)) {
             perror("ATENTION, SOMETHING WENT WRONG. THE PATIENTE QUEUE CANT'T HAVE THE LAST ELEMENT WITH POINTER AND THE FIRST NOT.");
@@ -95,6 +108,19 @@ Patient* pq_remove(PatientQueue* pq) {
     return p;
 }
 
+void pq_remove_free(PatientQueue* pq) {
+    Patient* p;
+
+    assert(IsNotNull(pq));
+
+    p = pq->first;
+
+    pq->size--;
+    patient_set_next(pq->first, patient_get_next_ptr(p));
+
+    patient_free(p, DESTROY);
+}
+
 
 unsigned int pq_get_size(const PatientQueue* pq) {
     assert(IsNotNull(pq));
@@ -105,7 +131,14 @@ unsigned int pq_get_size(const PatientQueue* pq) {
 Patient* pq_get_patient_ptr(const PatientQueue* pq, unsigned int i) {
     Patient* p;
     
-    assert(i==0);
+    /* The index must bi a value betwen 1 and the queue size */
+    if(i == 0 || i > pq->size) {
+        printf("\nAtention, invalid value %u\n", i);
+        return NULL;
+    }
+    
+    if(i == pq->size)
+        return pq->last;
 
     p = pq->first;
     i--;

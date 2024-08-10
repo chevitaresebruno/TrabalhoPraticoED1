@@ -1,3 +1,7 @@
+/*
+    This file contains all important definition for correct work of patient struct. All functions in this script are explained in patient.h file.
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -8,7 +12,14 @@
 
 #include "lib/include/patient/patient.h"
 
-/* PATIENT */
+/*
+    The struct patient representate a patient in a hospital. Patient is a simply chained list.
+    attr:
+        id -> the id in database;
+        name -> a pointer to it`s name;
+        tm -> Time and day it`s arrived at the hospital;
+        next -> a pointer to the next patient in queue.
+*/
 struct patient {
     unsigned int id;
     char* name;
@@ -44,7 +55,8 @@ Patient* patient_free(Patient* p, const unsigned char free_code) {
         break;
     
     default:
-        printf("ATENTION, THE CODE %d IS NOT IMPLEMENTADED. THE PATIENT HAS NOT BEEN DESTROYED.", free_code);
+        /* The only accepted codes are listed in patient.h. If any unexpected code is entered, the patient does not move, and the entered code is returned as an error message*/
+        printf("ATENTION, THE CODE %d IS NOT IMPLEMENTADED. THE PATIENT DOES NOT MOVE.", free_code);
         return n;
     }
 
@@ -89,6 +101,7 @@ Patient* patient_create(const unsigned int p_id, const char* p_name, const TM* t
 }
 
 
+/* The functions below only can be used if it's args are not null */
 unsigned int patient_get_id(const Patient* p) {
     assert(IsNotNull(p));
 
@@ -151,6 +164,7 @@ void patient_set_next(Patient* src, Patient* ori) {
     
     src->next = ori;
 }
+/* The functions above only can be used if the args are not null */
 
 
 int patient_sizeof() {

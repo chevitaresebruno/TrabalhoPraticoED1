@@ -1,3 +1,7 @@
+/*
+    This file contains a lot of usefull stuffs that`s used in other scripts
+*/
+
 #pragma once
 
 #define IsNull(value) (value == NULL)
