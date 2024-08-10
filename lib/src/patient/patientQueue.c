@@ -18,9 +18,11 @@ struct pq {
 
 
 void pq_free(PatientQueue* pq) {
+    Patient* p;
+
     assert(IsNull(pq));
 
-    Patient* p = pq->first;
+    p = pq->first;
 
     while (IsNotNull(p))
         p = patient_free(p, RETURN_NEXT_AND_DESTROY);
@@ -41,7 +43,9 @@ void pq_free(PatientQueue* pq) {
 
 
 PatientQueue* pq_create() {
-    PatientQueue* pq = (PatientQueue*)malloc(sizeof(PatientQueue));
+    PatientQueue* pq;
+    
+    pq = (PatientQueue*)malloc(sizeof(PatientQueue));
 
     if(IsNull(pq)) {
         perror("NEW PATIENTE QUEUE: ");
@@ -80,9 +84,11 @@ void pq_insert(PatientQueue* pq, Patient* p) {
 
 
 Patient* pq_remove(PatientQueue* pq) {
+    Patient* p;
+
     assert(IsNotNull(pq));
 
-    Patient* p = pq->first;
+    p = pq->first;
 
     pq->size--;
     patient_set_next(pq->first, patient_get_next_ptr(p));
@@ -98,9 +104,11 @@ unsigned int pq_get_size(const PatientQueue* pq) {
 }
 
 Patient* pq_get_patient_ptr(const PatientQueue* pq, unsigned int i) {
+    Patient* p;
+    
     assert(i==0);
 
-    Patient* p = pq->first;
+    p = pq->first;
     i--;
 
     while(i--)

@@ -18,10 +18,12 @@ struct patient {
 
 
 Patient* patient_free(Patient* p, const unsigned char free_code) {
+    Patient* n;
+
     if(IsNull(p))
         return NULL;
         
-    Patient* n = NULL;
+    n = NULL;
     
     switch (free_code)
     {
@@ -53,8 +55,9 @@ Patient* patient_free(Patient* p, const unsigned char free_code) {
 
 
 Patient* patient_create(const unsigned int p_id, const char* p_name, const TM* timestamp) {
-    Patient* p = (Patient*)malloc(sizeof(Patient));
+    Patient* p;
     
+    p = (Patient*)malloc(sizeof(Patient));
     if(IsNull(p)) {
         perror("CREATE PATIENT: ");
         exit(MEMORY_ERROR);
@@ -99,10 +102,15 @@ char* patient_get_name_ptr(const Patient* p) {
 }
 
 char* patient_get_name(const Patient* p) {
+    char* n;
+    
     assert(IsNotNull(p));
     
-    char* n = (char*)malloc(sizeof(char)*strlen(p->name));
-
+    n = (char*)malloc(sizeof(char)*strlen(p->name));
+    if(IsNull(n)) {
+        perror("CREATE COPY OF PATIENT NAME.");
+        exit(MEMORY_ERROR);
+    }
     strcpy(n, p->name);
 
     return n;
@@ -115,9 +123,15 @@ TM* patient_get_timestamp_ptr(const Patient* p) {
 }
 
 TM* patient_get_timestamp(const Patient* p) {
+    TM* t;
+
     assert(IsNotNull(p));
     
-    TM* t = (TM*)malloc(sizeof(TM));
+    t = (TM*)malloc(sizeof(TM));
+    if (IsNull(t)) {
+        printf("ERROR TO CREATE PATIENT TIMESTAMP COPY");
+        exit(MEMORY_ERROR);
+    }
 
     *t = *(p->tm);
 
