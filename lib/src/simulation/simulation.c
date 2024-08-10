@@ -2,14 +2,13 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "env.h"
 #include "lib/include/shared.h"
 
 #include "lib/include/patient/patient.h"
 #include "lib/include/patient/patienteQueue.h"
 #include "lib/include/db/db.h"
 #include "lib/include/simulation/simulation.h"
-
-#define NewPatientCome rand()%10 < NEW_PATIENT_PROBALY
 
 
 void add_patient(PatientQueue* pq) {
@@ -24,7 +23,7 @@ void add_patient(PatientQueue* pq) {
 }
 
 void simulation() {
-    register unsigned int i=0;
+    register unsigned int i;
     PatientQueue* pq = pq_create();
     unsigned int id;
 
@@ -32,27 +31,19 @@ void simulation() {
     birthdate.tm_year = 2004; 
     birthdate.tm_mon = 10; 
     birthdate.tm_mday = 8; 
-    Patient* p = patient_create(1, "NAME", &birthdate);
+    Patient* p = patient_create(0, "NAME", &birthdate);
 
     srand(SEED);
     
     pq_insert(pq, p);
     add_patient(pq);
-
-    db_get(LAST_ID, &id);
-
-    printf("%d", id);
     
-   
-    /*
     for(i=0; i<SIMULATION_TIME_UNITS; i++) {
-        if(NewPatientCome){
-            if(pq->size)
-                add_patient(pq);
-            else
-                pq_insert()
+        if(NewPatientCome) {
+            db_get(LAST_ID, &id);
+            id++;
+            p = patient_create(id, "NAME", &birthdate);
+            add_patient(pq);
         }
     }
-    */
-
 }

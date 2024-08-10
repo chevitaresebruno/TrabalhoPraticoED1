@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "env.h"
 #include "lib/include/shared.h"
 
 #include "lib/include/patient/patient.h"
@@ -70,11 +71,12 @@ void db_insert(Patient* p) {
         fprintf(f, "-- %u\n", patient_get_id(p));
     }
     else {
-        sscanf(line, "-- %u\n", &id);
+        fgets(line, sizeof(line), f);
+        sscanf(line, "-- %u", &id);
         fclose(f);
         f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w");
         id++;
-        fprintf(f, "-- %u", id);
+        fprintf(f, "-- %u\n", id);
     }
 
     fclose(f);
