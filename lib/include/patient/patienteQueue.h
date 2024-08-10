@@ -1,8 +1,5 @@
 #pragma once
 
-typedef struct pq PatientQueue;
-
-
 void pq_free(PatientQueue* patient_queue);
 
 

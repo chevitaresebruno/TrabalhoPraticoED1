@@ -4,10 +4,10 @@
 
 #include "lib/include/shared.h"
 
-#include "lib/include/simulation/simulation.h"
-#include "lib/include/patient/patienteQueue.h"
 #include "lib/include/patient/patient.h"
+#include "lib/include/patient/patienteQueue.h"
 #include "lib/include/db/db.h"
+#include "lib/include/simulation/simulation.h"
 
 #define NewPatientCome rand()%10 < NEW_PATIENT_PROBALY
 
@@ -18,7 +18,7 @@ void add_patient(PatientQueue* pq) {
     birthdate.tm_mon = 10;
     birthdate.tm_mday = 8;
 
-    Patient* p = patient_create(patient_get_id(pq_get_last_ptr(pq)), "NAME", &birthdate);
+    Patient* p = patient_create(patient_get_id(pq_get_last_ptr(pq))+1, "NAME", &birthdate);
     pq_insert(pq, p);
     db_insert(p);
 }
@@ -32,7 +32,7 @@ void simulation() {
     birthdate.tm_year = 2004; 
     birthdate.tm_mon = 10; 
     birthdate.tm_mday = 8; 
-    Patient* p = patient_create(0, "NAME", &birthdate);
+    Patient* p = patient_create(1, "NAME", &birthdate);
 
     srand(SEED);
     
