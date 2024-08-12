@@ -1,88 +1,62 @@
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "lib/.conf/env.h"
 #include "lib/include/shared.h"
 
+#include "lib/include/exam/condition.h"
 #include "lib/include/exam/exam.h"
 
-#include "lib/.extern/cjson/cJSON.h"
 
-
-struct condition {
-    char* name;
-    double prob;
-    unsigned char sev;
+struct exam
+{
+    unsigned int id;
+    unsigned int xr_id;
+    unsigned int p_id;
+    Condition* cond;
+    TM* timestamp;
 };
 
 
-Condition* condition_create(const char* name, const double prob, const int sev) {
-    Condition* cond;
-    
-    cond = (Condition*)malloc(sizeof(Condition));
-    if(IsNull(cond)) {
-        perror("CREATE CONDITION");
-        exit(MEMORY_ERROR);
-    }
-
-    cond->name = (char*)malloc(sizeof(char)*strlen(name));
-    if(IsNull(cond->name)) {
-        free(cond);
-        perror("CREATE CONDITION NAME");
-        exit(MEMORY_ERROR);
-    }
-
-    strcpy(cond->name, name);
-    cond->prob = prob;
-    cond->sev = sev;
-
-    return cond;
-}
-
-
-void cJSON_Parse_Condition(const cJSON* json, Condition* cond) {
-    cJSON* name; 
-    cJSON* prob; 
-    cJSON* sev;
-
-    name = cJSON_GetObjectItem(json, "nome");
-    prob = cJSON_GetObjectItem(json, "probabilidade");
-    sev = cJSON_GetObjectItem(json, "gravidade");
-
-    if(IsNull(name) || IsNull(prob) || IsNull(sev)) {
-        printf("THE JSON OBJECT IS NOT CORRECT");
-        exit(UNKNOWN_ERROR);
-    }
-
-    if(IsNull(cond))
-        cond = condition_create(name->string, prob->valuedouble, sev->valueint);
-    else {
-        cond->name = name->string;
-        cond->prob += prob->valuedouble; /* Specific use to better performance */
-        cond->sev = sev->valueint;
-    }
-}
-
-
-Condition* ia_output() {
-    cJSON* json;
-    Condition* cond;
-    unsigned int ia_o;
-    
-    json = cJSON_Parse_File(CONDITIONS_FILE_PATH);
-    cond = NULL;
-    ia_o = IA_OUTPUT;
-
-    for(register unsigned int i=0; i<cJSON_GetArraySize(json); i++)
+void exam_free(Exam* e, unsigned char free_code) {
+    switch (free_code)
     {
-        cJSON_Parse_Condition(json, cond);
-
-        if(ia_o < (cond->prob * 100))
-            return cond;
+    case ALLOCATE_CONDITION_ERROR:
+        break;
+    case ALLOCATE_TIMESTAMP_ERROR:
+        free(e->cond);
+    case DESTROY:
+        free(e->cond);
+        free(e->timestamp);
+    default:
+        printf("ATENTION, THE CODE %u IS NOT IMPLEMENTADED. NOTHING HAPPENS TO STRUCT", free_code);
+        return;
     }
-    
-    
-    printf("ERROR, THE PROBABILITY SUMS IS NOT 1.");
-    exit(CONF_ERROR);
+
+    free(e);
+}
+
+
+Exam* exam_create(const unsigned int id, const unsigned int xr_id, const unsigned int p_id, const Condition* cond, const TM* timestamp) {
+    Exam* e;
+
+    e = (Exam*)malloc(sizeof(Exam));
+    if(IsNull(e)) {
+        perror("CREATE EXAM");
+        exit(MEMORY_ERROR);
+    }
+
+    e->timestamp = (TM*)malloc(sizeof(TM));
+    if(IsNull(e->timestamp)) {
+        exam_free(e, ALLOCATE_TIMESTAMP_ERROR);
+        perror("CREATE TIMESTAMP");
+        exit(MEMORY_ERROR);
+    }
+
+    e->id = id;
+    e->xr_id = xr_id;
+    e->p_id = p_id;
+    condition_copy(e->cond, cond);
+    *(e->timestamp) = *timestamp;
 }

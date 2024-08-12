@@ -14,5 +14,6 @@ typedef struct patient Patient;
 typedef struct pq PatientQueue;
 typedef struct xrmm XRMM;
 typedef struct condition Condition;
+typedef struct exam Exam;
 
 enum ERROS {MEMORY_ERROR, UNKNOWN_ERROR, CONF_ERROR};

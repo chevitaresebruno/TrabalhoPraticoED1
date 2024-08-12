@@ -16,6 +16,7 @@ struct xrmm {
     unsigned int size;
     unsigned int* patients;
     unsigned int* time;
+    unsigned int* machines;
 };
 
 
@@ -27,11 +28,16 @@ void xrmm_free(XRMM* xrmm, unsigned char free_code) {
     case ALLOCATE_TIME_ERROR:
         free(xrmm->patients);
         break;
+    case ALLOCATE_MACHINE_ERROR:
+        free(xrmm->time);
+        free(xrmm->patients);
+        break;        
     case DESTROY:
         free(xrmm->time);
         free(xrmm->patients);
+        free(xrmm->machines);
         break;
-    
+
     default:
         printf("ATENTION, THE CODE %d IS NOT IMPLEMENTADED", free_code);
         break;
@@ -41,7 +47,7 @@ void xrmm_free(XRMM* xrmm, unsigned char free_code) {
 }
 
 
-XRMM* xrmm_create(unsigned int mn) {
+XRMM* xrmm_create(unsigned int mn, const unsigned int* ms_id) {
     XRMM* xrmm;
     
     xrmm = (XRMM*)malloc(sizeof(xrmm));
@@ -64,6 +70,15 @@ XRMM* xrmm_create(unsigned int mn) {
         exit(MEMORY_ERROR);
     }
 
+    xrmm->machines = (unsigned int*)malloc(sizeof(unsigned int)*mn);
+    if(IsNull(xrmm->machines)) {
+        xrmm_free(xrmm, ALLOCATE_MACHINE_ERROR);
+        perror("ALLOCATE MACHINES");
+        exit(MEMORY_ERROR);
+    }
+    for(register unsigned int i = 0; i < mn; i++)
+        xrmm->machines[i] = ms_id[i];
+    
     xrmm->size = mn;
 
     return xrmm;
@@ -90,14 +105,14 @@ unsigned char xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
     return FALSE;
 }
 
-unsigned char xrmm_dealloc_patients(XRMM* xrmm) {
+unsigned int xrmm_dealloc_patients(XRMM* xrmm) {
     for(register unsigned int i=0; i < xrmm->size; i++) {
         if(xrmm->time[i] == 0 & xrmm->patients[i] != 0) {
             xrmm->patients[i] = 0;
-            return TRUE;
+            return xrmm->machines[i];
         }
     }
 
-    return FALSE;
+    return 0;
 }
 

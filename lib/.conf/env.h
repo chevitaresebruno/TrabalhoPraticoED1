@@ -22,6 +22,6 @@
 #define XRAY_MACHINE_NUMBER 5
 #define XRAY_MACHINE_EXAM_TIME_UNIT 10
 
-/* Used in exam.c */
+/* Used in ia.c */
 #define IA_OUTPUT rand()%100
 #define CONDITIONS_FILE_PATH "lib/.conf/conditions.json"
