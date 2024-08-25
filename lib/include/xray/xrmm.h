@@ -17,6 +17,6 @@ XRMM* xrmm_create(unsigned int machine_number, const unsigned int* machines_id);
 void xrmm_time_down(XRMM* xrmm);
 
 
-unsigned char xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id);
+BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id);
 
 unsigned int xrmm_dealloc_patients(XRMM* xrmm);

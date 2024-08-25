@@ -2,6 +2,8 @@
     This file contains all important definition for correct work of database (it`s a .txt file :p).
 */
 
+#include <sys/stat.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,6 +22,20 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
+
+
+void create_db_dir() {
+    FILE* f;
+
+    #if defined(_WIN32) || defined(_WIN64)
+    mkdir(DATA_BASE_FOLDER);
+    #else
+    mkdir(DATA_BASE_FOLDER, 0755)
+    #endif
+    
+    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "a+");
+    fprintf(f, "-- 0\n");
+}
 
 
 /*
@@ -45,10 +61,11 @@ char* db_fname(const char* fname) {
     return n;
 }
 
+
 /*
     This function is private in lib. It creates a new medata file based in a prefetch name. If the database not exist, it will create a fodler and will create the detabase and database metadata files. It`s names can be set in the env.h file. 
 */
-void md_create() {
+BOOL md_create() {
     FILE* f;
     char* mdn;
 
@@ -56,21 +73,19 @@ void md_create() {
 
     f = fopen(mdn, "r");
 
-    if(IsNull(f)) {
-        #if defined(_WIN32) || defined(_WIN64)
-        mkdir(DATA_BASE_FOLDER);
-        #else
-        mkdir(DATA_BASE_FOLDER, 0755)
-        #endif
-        
-        f = fopen(db_fname(DATA_BASE_METADATA_FILE), "a+");
-        fprintf(f, "-- 0\n");
-    }
-    else
+    if(IsNull(f))
+        create_db_dir();
+    
+    else{
         printf("\nATENTION! The metadata alredy exists");
+        return FALSE;
+    }
 
     fclose(f);
+
+    return TRUE;
 }
+
 
 /*
     This function is private in lib. It update the metadata file size attribute. This attribute contains the last patient id insertd.
@@ -90,9 +105,26 @@ void md_update_lastid(unsigned int lid) {
 }
 
 /*
+
+*/
+BOOL md_restart() {
+    FILE* f;
+
+    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w+");
+
+    if(IsNull(f))
+        return FALSE;
+    
+    else {
+        fclose(f);
+        return TRUE;
+    }
+}
+
+/*
     This function is private in lib. It creates a new databased based in a prefetch name. If the database not exist, it will create a fodler and will create the detabase and database metadata files. It`s names can be set in the env.h file. 
 */
-void db_create() {
+BOOL db_create() {
     FILE* f;
     char* dbn;
 
@@ -100,19 +132,15 @@ void db_create() {
 
     f = fopen(dbn, "r");
 
-    if(IsNull(f)) {
-        #if defined(_WIN32) || defined(_WIN64)
-        mkdir(DATA_BASE_FOLDER);
-        #else
-        mkdir(DATA_BASE_FOLDER, 0755)
-        #endif
-        
-        f = fopen(dbn, "w+");
-    }
-    else
+    if(IsNull(f))
+        create_db_dir();
+    else {
         printf("ATENTION! The database alredy exists");
+        return FALSE;
+    }
 
     fclose(f);
+    return TRUE;
 }
 
 /* Explained in db.h */
@@ -170,3 +198,35 @@ void db_get(unsigned int option, void* save) {
         break;
     }
 }
+
+/* Extern Check */
+BOOL folder_exists() {
+    struct stat statbuf;
+
+
+    if (stat(&DATA_BASE_FOLDER, &statbuf) != 0)
+        return FALSE;
+
+    return S_ISDIR(statbuf.st_mode); /* TRUE if it is a dir */
+}
+
+DB_OUTPUTS_CHECKS db_check() {
+    if(!folder_exists()) {
+        create_db_dir();
+        db_create();
+        md_create();
+
+        return FULL_CREATE;
+    }
+    
+    if(db_create()) {
+        md_restart();
+        return CREATE_DATABASE_AND_RESTART_METADATA_FILE;
+    }
+
+    if(md_create())
+        return CREATE_METADATA_FILE;
+    
+    return EVERY_THING_CORRECT;
+}
+

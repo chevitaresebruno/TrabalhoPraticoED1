@@ -93,7 +93,7 @@ void xrmm_time_down(XRMM* xrmm) {
 }
 
 
-unsigned char xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
+BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
     for(register unsigned int i=0; i < xrmm->size; i++) {
         if(xrmm->patients[i] != 0) {
             xrmm->patients[i] = p_id;

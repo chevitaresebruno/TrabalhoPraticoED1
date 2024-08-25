@@ -7,7 +7,7 @@
 #define IsNull(value) (value == NULL)
 #define IsNotNull(value) (value != NULL)
 
-enum BOLL {FALSE, TRUE};
+typedef enum bool {FALSE, TRUE} BOOL;
 
 typedef struct tm TM;
 typedef struct patient Patient;

@@ -12,6 +12,7 @@
 #define SIMULATION_TIME_UNITS 43200
 #define NEW_PATIENT_PROBALY 20
 #define NewPatientCome rand()%100 < NEW_PATIENT_PROBALY
+#define XRAY_MACHINES_ID {1, 2, 3, 4, 5}
 
 /* Used in db.c file */
 #define DATA_BASE_FOLDER "output" 
