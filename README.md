@@ -1,7 +1,7 @@
 # Trabalho Prático 1 (Parte 2)
 Este trabalho tem por objetivo implementar duas estruturas simples, exam e patient, e uma série de funções a elas associadas.
 
-## Estruturas
+## Estruturas:
 O código conta com dois tipos abstratos de dados (TAD). Elas são implementadas com o objetivo de modelar um paciente e um exame. Ambas as estruturas foram criadas em arquivos separados por uma questão de organização do código.
 
 ### struct patient
