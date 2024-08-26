@@ -104,9 +104,11 @@ void xrmm_time_down(XRMM* xrmm) {
 
 BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
     register unsigned int i;
-
+    if(!p_id || IsNull(p_id))
+        return FALSE;
+    
     for(i = 0; i < xrmm->size; i++) {
-        if(xrmm->patients[i] != 0) {
+        if(xrmm->patients[i] == 0) {
             xrmm->patients[i] = p_id;
             xrmm->time[i] = XRAY_MACHINE_EXAM_TIME_UNIT;
             return TRUE;
@@ -131,7 +133,7 @@ XRMM_DeallocOut* xrmm_dealloc_patients(XRMM* xrmm) {
 
             output->p_id = xrmm->patients[i];
             output->m_id = xrmm->machines[i];
-
+            printf("ENTRAMOS AQUI %u %u", output->p_id, output->m_id);
             return output;
         }
     }

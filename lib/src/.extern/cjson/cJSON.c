@@ -759,7 +759,7 @@ cJSON* cJSON_Parse_File(const char* file_name) {
 	char* buffer;
 	cJSON* json;
 
-	fopen(file_name, "r");
+	f = fopen(file_name, "r");
 	if (f == NULL) {
 		printf("ERROR, THE FILE %s NOT EXIST", file_name);
 		exit(EXIT_FAILURE);

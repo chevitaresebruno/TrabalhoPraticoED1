@@ -21,7 +21,7 @@ Condition* ia_output() {
 
     for(i=0; i<cJSON_GetArraySize(json); i++)
     {
-        cJSON_Parse_Condition(json, cond);
+        cJSON_Parse_Condition(cJSON_GetArrayItem(json, i), cond);
 
         if(ia_o < (condition_get_prob(cond) * 100))
             return cond;

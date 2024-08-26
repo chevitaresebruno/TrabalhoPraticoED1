@@ -57,9 +57,6 @@ void db_create_dir() {
     #else
     mkdir(DATA_BASE_FOLDER, 0755)
     #endif
-    
-    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "a+");
-    fprintf(f, "-- 0\n");
 }
 
 
@@ -74,10 +71,10 @@ BOOL md_restart() {
     if(IsNull(f))
         return FALSE;
     
-    else {
-        fclose(f);
-        return TRUE;
-    }
+    fprintf(f, "-- 0\n");
+
+    fclose(f);
+    return TRUE;
 }
 
 
@@ -140,9 +137,9 @@ BOOL db_create(const char* db_name) {
     f = fopen(dbn, "r");
 
     if(IsNull(f))
-        db_create_dir();
+        f = fopen(dbn, "w");
     else {
-        printf("ATENTION! The database alredy exists");
+        printf("\nATENTION! The database %s alredy exists", db_name);
         return FALSE;
     }
 
@@ -154,15 +151,15 @@ BOOL db_create(const char* db_name) {
 void db_insert(void* info, const char* db_name) {
     FILE* f;
     TM* t;
+    
 
-    if(strcmp(DATA_BASE_NAME, db_name))
+    if(strcmp(DATA_BASE_NAME, db_name) == 0)
     {
-        info = (Patient*) info;
-
         f = fopen(db_fname(DATA_BASE_METADATA_FILE), "r");
         if(IsNull(f))
             md_create(FALSE);
         fclose(f);
+        patient_get_id((Patient*)info);
 
         md_update_lastid(patient_get_id(info));
 
@@ -185,7 +182,7 @@ void db_insert(void* info, const char* db_name) {
         f = fopen(db_fname(db_name), "a");
     }
 
-    if(strcmp(DATA_BASE_EXAM_NAME, db_name)) {
+    if(strcmp(DATA_BASE_EXAM_NAME, db_name) == 0) {
         info = (Exam*) info;
         t = exam_get_tm_ptr(info);
 
@@ -217,7 +214,7 @@ void db_get_last_id(unsigned int* s) {
 }
 
 /* Explained in db.h */
-void db_get(unsigned int option, void* save) {
+void db_get(unsigned int option, void* save) {    
     switch (option)
     {
     case ID:

@@ -98,7 +98,7 @@ void pq_insert(PatientQueue* pq, Patient* p) {
 Patient* pq_remove(PatientQueue* pq) {
     Patient* p;
 
-    assert(IsNotNull(pq));
+    assert(IsNull(pq));
 
     p = pq->first;
 

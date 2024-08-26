@@ -9,7 +9,7 @@
 #define SEED time(NULL)
 
 /* Used in simulation.c file */
-#define SIMULATION_TIME_UNITS 43200
+#define SIMULATION_TIME_UNITS 100
 #define NEW_PATIENT_PROBALY 20
 #define NewPatientCome rand()%100 < NEW_PATIENT_PROBALY
 #define XRAY_MACHINES_ID {1, 2, 3, 4, 5}

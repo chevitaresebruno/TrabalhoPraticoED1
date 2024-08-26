@@ -21,7 +21,7 @@ TM* get_current_time() {
     TM* tw;
 
     time(&t);
-    tw = localtime(t);
+    tw = localtime(&t);
 
     return tw;
 }
@@ -46,7 +46,10 @@ XRMM* create_xrmm() {
 }
 
 unsigned int first_patient_id(const PatientQueue* pq) {
-    return patient_get_id(pq_get_first_ptr(pq));
+    if(pq_get_size(pq))
+        return patient_get_id(pq_get_first_ptr(pq));
+    
+    return 0;
 }
 
 
@@ -61,29 +64,27 @@ void simulation() {
     XRMM* xrmm;
     ExamQueue* eq;
 
+    srand(SEED);
+    db_check();
+
     db_get(LAST_ID, &id);
     pq = pq_create();
     xrmm = create_xrmm();
     eq = examqueue_create();
-    
-    srand(SEED);
-    db_check();
-    
+
     for(i=0; i<SIMULATION_TIME_UNITS; i++) {
         if(NewPatientCome) {
-            add_patient(pq, id);
             id++;
+            add_patient(pq, id);
         }
 
-        if (xrmm_alloc_patient(xrmm, first_patient_id(pq))) {
-            pq_remove(pq);
-        }
+        if (xrmm_alloc_patient(xrmm, first_patient_id(pq)))
+            pq_remove_free(pq);
 
         xrmm_time_down(xrmm);
         xrmm_output = xrmm_dealloc_patients(xrmm); 
         if(IsNotNull(xrmm_output)) {
             Exam* e;
-
             e = exam_create(exam_id, xrmmDealloOut_get_mid(xrmm_output), xrmmDealloOut_get_pid(xrmm_output), ia_output(), get_current_time());
 
             db_insert(e, DATA_BASE_EXAM_NAME);

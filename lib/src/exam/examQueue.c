@@ -33,7 +33,7 @@ void examqueue_free(ExamQueue* eq) {
 
 ExamQueue* examqueue_create() {
     ExamQueue* eq;
-
+    
     eq = (ExamQueue*)malloc(sizeof(ExamQueue));
     if(IsNull(eq)) {
         perror("MEMORY ERROR; ALOCATE NEW EXAM_QUEUE");
