@@ -3,6 +3,9 @@
 
 int condition_how_much();
 
+Condition* condition_allocate_memory();
+
+Condition* condition_create(const char* name, const double prob, const int sev);
 
 void condition_copy(Condition* dest, const Condition* src);
 

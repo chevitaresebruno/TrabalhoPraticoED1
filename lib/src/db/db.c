@@ -185,7 +185,7 @@ void db_insert(void* info, const char* db_name) {
     if(strcmp(DATA_BASE_EXAM_NAME, db_name) == 0) {
         info = (Exam*) info;
         t = exam_get_tm_ptr(info);
-
+        if(exam_get_condition_ptr((Exam*) info) == NULL) printf("NULLLLLLLLLLLLLLLLLLLLLL");
         fprintf(f, "%d %d %d %s %d %s %d - %d:%d:%d\n", exam_get_id(info), exam_get_xrid(info), exam_get_pid(info), condition_get_name(exam_get_condition_ptr(info)), t->tm_mday, t->tm_mon, t->tm_year, t->tm_hour, t->tm_min, t->tm_sec);
     }
     else if(strcmp(DATA_BASE_REPORT_NAME, db_name)) {

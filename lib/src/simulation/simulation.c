@@ -85,11 +85,21 @@ void simulation() {
         xrmm_output = xrmm_dealloc_patients(xrmm); 
         if(IsNotNull(xrmm_output)) {
             Exam* e;
-            e = exam_create(exam_id, xrmmDealloOut_get_mid(xrmm_output), xrmmDealloOut_get_pid(xrmm_output), ia_output(), get_current_time());
+            Condition* c = ia_output();
+            
+
+            e = exam_create(exam_id, xrmmDealloOut_get_mid(xrmm_output), xrmmDealloOut_get_pid(xrmm_output), c, get_current_time());
+            printf("1");
+            
+            if(exam_get_condition_ptr(e) == NULL) {
+                printf("SDKJLANDKJLSANLKJDNASKLJ");
+            }
 
             db_insert(e, DATA_BASE_EXAM_NAME);
+            printf("1");
 
             examqueue_insert(eq, e);
+            printf("1");
         }
 
         /* Analisys by Medic */

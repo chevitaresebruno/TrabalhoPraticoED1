@@ -104,7 +104,7 @@ void xrmm_time_down(XRMM* xrmm) {
 
 BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
     register unsigned int i;
-    if(!p_id || IsNull(p_id))
+    if(p_id == 0 || IsNull(p_id))
         return FALSE;
     
     for(i = 0; i < xrmm->size; i++) {
@@ -123,8 +123,7 @@ XRMM_DeallocOut* xrmm_dealloc_patients(XRMM* xrmm) {
     register unsigned int i;
 
     for(i = 0; i < xrmm->size; i++) {
-        if((xrmm->time[i] == 0) & (xrmm->patients[i] != 0)) {
-            xrmm->patients[i] = 0;
+        if((xrmm->time[i] == 0) && (xrmm->patients[i] != 0)) {
             output = (XRMM_DeallocOut*)malloc(sizeof(XRMM_DeallocOut));
             if(IsNull(output)) {
                 perror("NOT ENOGH MEMORY");
@@ -133,7 +132,8 @@ XRMM_DeallocOut* xrmm_dealloc_patients(XRMM* xrmm) {
 
             output->p_id = xrmm->patients[i];
             output->m_id = xrmm->machines[i];
-            printf("ENTRAMOS AQUI %u %u", output->p_id, output->m_id);
+            xrmm->patients[i] = 0;
+
             return output;
         }
     }

@@ -38,14 +38,22 @@ int condition_how_much() {
 }
 
 
-Condition* condition_create(const char* name, const double prob, const int sev) {
-    Condition* cond;
+Condition* condition_allocate_memory() {
+    Condition* c = (Condition*)malloc(sizeof(Condition));
     
-    cond = (Condition*)malloc(sizeof(Condition));
-    if(IsNull(cond)) {
+    if(IsNull(c)) {
         perror("CREATE CONDITION");
         exit(MEMORY_ERROR);
     }
+
+    return c;
+}
+
+
+Condition* condition_create(const char* name, const double prob, const int sev) {
+    Condition* cond;
+    
+    cond = condition_allocate_memory();
 
     cond->name = (char*)malloc(sizeof(char)*strlen(name));
     if(IsNull(cond->name)) {
@@ -84,6 +92,8 @@ char* condition_get_name(const Condition* cond) {
 }
 
 double condition_get_prob(const Condition* cond) {
+    assert(IsNotNull(cond));
+
     return cond->prob;
 }
 

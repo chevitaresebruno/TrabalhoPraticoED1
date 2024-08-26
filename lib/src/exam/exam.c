@@ -69,7 +69,9 @@ Exam* exam_create(const unsigned int id, const unsigned int xr_id, const unsigne
     e->id = id;
     e->xr_id = xr_id;
     e->p_id = p_id;
-    condition_copy(e->cond, cond);
+    e->cond = condition_create(condition_get_name(cond), condition_get_prob(cond), condition_get_sev(cond));
+
+    if(IsNull(e->cond)) printf("156020200005184804808");
     *(e->timestamp) = *timestamp;
 
     return e;
