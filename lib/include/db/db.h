@@ -9,18 +9,13 @@
 */
 enum GET_OPTIONS {ID, LAST_ID};
 
-/*
-    Check
-*/
-typedef enum db_outputs_checks {EVERY_THING_CORRECT, FULL_CREATE, CREATE_DATABASE_AND_RESTART_METADATA_FILE, CREATE_METADATA_FILE} DB_OUTPUTS_CHECKS;
-
 
 /*
     This function insert patient info in database. If the database does not exist, it will create a new one.
     args:
         patient -> a pointer to the patient you want to insert in the database.
 */
-void db_insert(Patient* patient);
+void db_insert(void* info, const char* database_name);
 
 /*
     This function get something from the database.
@@ -31,6 +26,6 @@ void db_insert(Patient* patient);
 void db_get(unsigned int option, void* save);
 
 /*
-
+    This function checks if it's everything ok with the database. It is used in start of simulation to prevents possible bugs (we dont test everything, so it may happen :p).
 */
-DB_OUTPUTS_CHECKS db_check();
+void db_check();

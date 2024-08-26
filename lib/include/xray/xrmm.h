@@ -19,4 +19,8 @@ void xrmm_time_down(XRMM* xrmm);
 
 BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id);
 
-unsigned int xrmm_dealloc_patients(XRMM* xrmm);
+XRMM_DeallocOut* xrmm_dealloc_patients(XRMM* xrmm);
+
+unsigned int xrmmDealloOut_get_mid(const XRMM_DeallocOut* xmdo);
+
+unsigned int xrmmDealloOut_get_pid(const XRMM_DeallocOut* xmdo);

@@ -9,6 +9,10 @@
 #include "lib/include/patient/patienteQueue.h"
 #include "lib/include/db/db.h"
 #include "lib/include/xray/xrmm.h"
+#include "lib/include/ai/ai.h"
+#include "lib/include/exam/condition.h"
+#include "lib/include/exam/exam.h"
+#include "lib/include/exam/examQueue.h"
 #include "lib/include/simulation/simulation.h"
 
 
@@ -26,7 +30,7 @@ void add_patient(PatientQueue* pq, const unsigned int id) {
     p = patient_create(id, "NAME", get_current_time());
 
     pq_insert(pq, p);
-    db_insert(p);
+    db_insert(p, DATA_BASE_NAME);
 }
 
 XRMM* create_xrmm() {
@@ -44,15 +48,17 @@ void simulation() {
     register unsigned int i;
 
     unsigned int id;
-    unsigned int patient_exam_id;
+    XRMM_DeallocOut* xrmm_output;
     unsigned int exam_id;
 
     PatientQueue* pq;
     XRMM* xrmm;
+    ExamQueue* eq;
 
     db_get(LAST_ID, &id);
     pq = pq_create();
     xrmm = create_xrmm();
+    eq = examqueue_create();
     
     srand(SEED);
     db_check();
@@ -68,15 +74,16 @@ void simulation() {
         }
 
         xrmm_time_down(xrmm);
-        patient_exam_id = xrmm_dealloc_patients(xrmm); 
-        if(patient_exam_id) {
-            /* IA OUTPUT */
-            /*INSERT IN DB */
-            /* INSERT IN PRIORITY QUEUE */
+        xrmm_output = xrmm_dealloc_patients(xrmm); 
+        if(IsNotNull(xrmm_output)) {
+            Exam* e;
 
-            patient_exam_id = 0;
+            e = exam_create(exam_id, xrmmDealloOut_get_mid(xrmm_output), xrmmDealloOut_get_pid(xrmm_output), ia_output(), get_current_time());
+
+            db_insert(e, DATA_BASE_EXAM_NAME);
         }
 
+        /* Analisys by Medic */
         /* REPORT */              
     }
 }

@@ -13,6 +13,8 @@
 #include "lib/include/shared.h"
 
 #include "lib/include/patient/patient.h"
+#include "lib/include/exam/exam.h"
+#include "lib/include/exam/condition.h"
 #include "lib/include/db/db.h"
 
 /* The code creates a directory, so it will check if you is in unix or windows OS. */
@@ -24,7 +26,7 @@
 #endif
 
 
-void create_db_dir() {
+void db_create_dir() {
     FILE* f;
 
     #if defined(_WIN32) || defined(_WIN64)
@@ -63,9 +65,27 @@ char* db_fname(const char* fname) {
 
 
 /*
+
+*/
+BOOL md_restart() {
+    FILE* f;
+
+    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w+");
+
+    if(IsNull(f))
+        return FALSE;
+    
+    else {
+        fclose(f);
+        return TRUE;
+    }
+}
+
+
+/*
     This function is private in lib. It creates a new medata file based in a prefetch name. If the database not exist, it will create a fodler and will create the detabase and database metadata files. It`s names can be set in the env.h file. 
 */
-BOOL md_create() {
+BOOL md_create(const BOOL ovwt) {
     FILE* f;
     char* mdn;
 
@@ -74,10 +94,15 @@ BOOL md_create() {
     f = fopen(mdn, "r");
 
     if(IsNull(f))
-        create_db_dir();
+        db_create_dir();
     
-    else{
-        printf("\nATENTION! The metadata alredy exists");
+    else {
+        printf("\nATENTION! The metadata alredy exists.");
+        if(ovwt) {
+            md_restart();
+            printf(" The metadata file has been restarted.\n");
+            return TRUE;
+        }
         return FALSE;
     }
 
@@ -97,7 +122,7 @@ void md_update_lastid(unsigned int lid) {
     
     f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w");
     if(IsNull(f)) {
-        md_create();
+        md_create(FALSE);
         f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w");
     }
 
@@ -105,35 +130,18 @@ void md_update_lastid(unsigned int lid) {
 }
 
 /*
-
-*/
-BOOL md_restart() {
-    FILE* f;
-
-    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "w+");
-
-    if(IsNull(f))
-        return FALSE;
-    
-    else {
-        fclose(f);
-        return TRUE;
-    }
-}
-
-/*
     This function is private in lib. It creates a new databased based in a prefetch name. If the database not exist, it will create a fodler and will create the detabase and database metadata files. It`s names can be set in the env.h file. 
 */
-BOOL db_create() {
+BOOL db_create(const char* db_name) {
     FILE* f;
     char* dbn;
 
-    dbn = db_fname(DATA_BASE_NAME);
+    dbn = db_fname(db_name);
 
     f = fopen(dbn, "r");
 
     if(IsNull(f))
-        create_db_dir();
+        db_create_dir();
     else {
         printf("ATENTION! The database alredy exists");
         return FALSE;
@@ -144,23 +152,50 @@ BOOL db_create() {
 }
 
 /* Explained in db.h */
-void db_insert(Patient* p) {
+void db_insert(void* info, const char* db_name) {
     FILE* f;
+    TM* t;
 
-    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "r");
-    if(IsNull(f))
-        md_create();
-    fclose(f);
-    
-    md_update_lastid(patient_get_id(p));
+    if(strcmp(DATA_BASE_NAME, db_name))
+    {
+        info = (Patient*) info;
 
-    f = fopen(db_fname(DATA_BASE_NAME), "a");
-    if(IsNull(f)) {
-        db_create();
-        f = fopen(db_fname(DATA_BASE_NAME), "a");
+        f = fopen(db_fname(DATA_BASE_METADATA_FILE), "r");
+        if(IsNull(f))
+            md_create(FALSE);
+        fclose(f);
+
+        md_update_lastid(patient_get_id(info));
+
+        f = fopen(db_fname(db_name), "a");
+        if(IsNull(f)) {
+            db_create(db_name);
+            f = fopen(db_fname(db_name), "a");
+        }
+
+        t = patient_get_timestamp_ptr(info);
+        fprintf(f, "%d %s - %d %d %d - %d:%d:%d\n", patient_get_id(info), patient_get_name_ptr(info), t->tm_mday, t->tm_mon, t->tm_year, t->tm_hour, t->tm_min, t->tm_sec);
+
+        fclose(f);
+        return;
     }
 
-    fprintf(f, "%d %s %d %d %d\n", patient_get_id(p), patient_get_name_ptr(p), patient_get_timestamp_ptr(p)->tm_mday, patient_get_timestamp_ptr(p)->tm_mon, patient_get_timestamp_ptr(p)->tm_year);
+    f = fopen(db_fname(db_name), "a");
+    if(IsNull(f)) {
+        db_create(db_name);
+        f = fopen(db_fname(db_name), "a");
+    }
+
+    if(strcmp(DATA_BASE_EXAM_NAME, db_name)) {
+        info = (Exam*) info;
+        t = exam_get_tm_ptr(info);
+
+        fprintf(f, "%d %d %d %s %d %s %d - %d:%d:%d\n", exam_get_id(info), exam_get_xrid(info), exam_get_pid(info), condition_get_name(exam_get_condition_ptr(info)), t->tm_mday, t->tm_mon, t->tm_year, t->tm_hour, t->tm_min, t->tm_sec);
+    }
+    else if(strcmp(DATA_BASE_REPORT_NAME, db_name)) {
+
+    }
+
 
     fclose(f);
 }
@@ -172,7 +207,7 @@ void db_get_last_id(unsigned int* s) {
 
     f = fopen(db_fname(DATA_BASE_METADATA_FILE), "r");
     if(IsNull(f)) {
-        db_create();
+        db_create(DATA_BASE_NAME);
         *s = 0;
         return;
     }
@@ -210,23 +245,13 @@ BOOL folder_exists() {
     return S_ISDIR(statbuf.st_mode); /* TRUE if it is a dir */
 }
 
-DB_OUTPUTS_CHECKS db_check() {
-    if(!folder_exists()) {
-        create_db_dir();
-        db_create();
-        md_create();
+void db_check() {
+    if(!folder_exists())
+        db_create_dir();
 
-        return FULL_CREATE;
-    }
-    
-    if(db_create()) {
-        md_restart();
-        return CREATE_DATABASE_AND_RESTART_METADATA_FILE;
-    }
+    md_create(db_create(DATA_BASE_NAME));  /* The db_create function creates the database DATA_BASE_NAME and returns a BOOL. So, if it creates a new database, the md_create function will overite the metadata file if its alredy exist. Else, it will not. */
 
-    if(md_create())
-        return CREATE_METADATA_FILE;
-    
-    return EVERY_THING_CORRECT;
+    db_create(DATA_BASE_EXAM_NAME);
+    db_create(DATA_BASE_REPORT_NAME);
 }
 

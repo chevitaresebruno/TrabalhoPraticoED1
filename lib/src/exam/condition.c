@@ -24,6 +24,20 @@ void condition_free(Condition* cond) {
 }
 
 
+int condition_how_much() {
+    cJSON* json;
+    int how_much;
+
+    json = cJSON_Parse_File(CONDITIONS_FILE_PATH);
+    how_much = cJSON_GetArraySize(json);
+    
+    cJSON_Delete(json);
+    free(json);
+
+    return how_much;
+}
+
+
 Condition* condition_create(const char* name, const double prob, const int sev) {
     Condition* cond;
     

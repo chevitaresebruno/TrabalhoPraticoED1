@@ -18,6 +18,8 @@
 #define DATA_BASE_FOLDER "output" 
 #define DATA_BASE_NAME "db_patient"
 #define DATA_BASE_METADATA_FILE "db_patient_metadata"
+#define DATA_BASE_EXAM_NAME "db_exam"
+#define DATA_BASE_REPORT_NAME "db_report"
 
 /* Used in xrmm.c file */
 #define XRAY_MACHINE_NUMBER 5

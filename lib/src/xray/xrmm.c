@@ -20,6 +20,12 @@ struct xrmm {
 };
 
 
+struct xrmm_dealloc_out {
+    unsigned int p_id;
+    unsigned int m_id;
+};
+
+
 void xrmm_free(XRMM* xrmm, unsigned char free_code) {
     switch (free_code)
     {
@@ -105,14 +111,33 @@ BOOL xrmm_alloc_patient(XRMM* xrmm, unsigned int p_id) {
     return FALSE;
 }
 
-unsigned int xrmm_dealloc_patients(XRMM* xrmm) {
+XRMM_DeallocOut* xrmm_dealloc_patients(XRMM* xrmm) {
+    XRMM_DeallocOut* output;
+
     for(register unsigned int i=0; i < xrmm->size; i++) {
         if(xrmm->time[i] == 0 & xrmm->patients[i] != 0) {
             xrmm->patients[i] = 0;
-            return xrmm->machines[i];
+            output = (XRMM_DeallocOut*)malloc(sizeof(XRMM_DeallocOut));
+            if(IsNull(output)) {
+                perror("NOT ENOGH MEMORY");
+                exit(MEMORY_ERROR);
+            }
+
+            output->p_id = xrmm->patients[i];
+            output->m_id = xrmm->machines[i];
+
+            return output;
         }
     }
 
-    return 0;
+    return NULL;
 }
 
+
+unsigned int xrmmDealloOut_get_mid(const XRMM_DeallocOut* xmdo) {
+    return xmdo->m_id;
+}
+
+unsigned int xrmmDealloOut_get_pid(const XRMM_DeallocOut* xmdo) {
+    return xmdo->p_id;
+}
