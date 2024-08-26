@@ -1,5 +1,3 @@
-# TESTE Parte 2
-
 # Trabalho Prático 1 (Parte 2)
 Este trabalho tem por objetivo implementar duas estruturas simples, exam e patient, e uma série de funções a elas associadas.
 
