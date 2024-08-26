@@ -10,7 +10,7 @@
         - ALLOCATE_NAME_ERROR: it`s used in patient.c, when the patient_create is call and there is no memory to create it`s name, this arg is passed;
         - ALLOCATE_TIMESTAMP_ERROR: it`s used in patient.c, when the patient_create is call and there is no memory to create it`s timestamp, this arg is passed;
 */
-enum PATIENT_FREE_CODE {DESTROY, RETURN_NEXT_AND_DESTROY, ALLOCATE_NAME_ERROR, ALLOCATE_TIMESTAMP_ERROR};
+enum PATIENT_FREE_CODE {P_DESTROY, P_RETURN_NEXT_AND_DESTROY, P_ALLOCATE_NAME_ERROR, P_ALLOCATE_TIMESTAMP_ERROR};
 
 /*
     This function free the allocated memory for a patient.

@@ -26,20 +26,6 @@
 #endif
 
 
-void db_create_dir() {
-    FILE* f;
-
-    #if defined(_WIN32) || defined(_WIN64)
-    mkdir(DATA_BASE_FOLDER);
-    #else
-    mkdir(DATA_BASE_FOLDER, 0755)
-    #endif
-    
-    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "a+");
-    fprintf(f, "-- 0\n");
-}
-
-
 /*
     This function is private in the lib. It is a name biulder. The database is inside a folder for better organization, so the script should construct the complete files path. So, if the databse folder is "DB" and the database name is "DB.txt", this function will create it`s full path "DB/DB.txt".
 
@@ -61,6 +47,19 @@ char* db_fname(const char* fname) {
     strcat(n, ".txt");
 
     return n;
+}
+
+void db_create_dir() {
+    FILE* f;
+
+    #if defined(_WIN32) || defined(_WIN64)
+    mkdir(DATA_BASE_FOLDER);
+    #else
+    mkdir(DATA_BASE_FOLDER, 0755)
+    #endif
+    
+    f = fopen(db_fname(DATA_BASE_METADATA_FILE), "a+");
+    fprintf(f, "-- 0\n");
 }
 
 
@@ -235,19 +234,8 @@ void db_get(unsigned int option, void* save) {
 }
 
 /* Extern Check */
-BOOL folder_exists() {
-    struct stat statbuf;
-
-
-    if (stat(&DATA_BASE_FOLDER, &statbuf) != 0)
-        return FALSE;
-
-    return S_ISDIR(statbuf.st_mode); /* TRUE if it is a dir */
-}
-
 void db_check() {
-    if(!folder_exists())
-        db_create_dir();
+    db_create_dir();
 
     md_create(db_create(DATA_BASE_NAME));  /* The db_create function creates the database DATA_BASE_NAME and returns a BOOL. So, if it creates a new database, the md_create function will overite the metadata file if its alredy exist. Else, it will not. */
 

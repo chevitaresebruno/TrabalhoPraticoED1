@@ -23,19 +23,22 @@ struct exam
 Exam* exam_free(Exam* e, unsigned char free_code) {
     Exam* n;
 
+    n = NULL;
+
     switch (free_code)
     {
-    case ALLOCATE_CONDITION_ERROR:
+    case E_ALLOCATE_CONDITION_ERROR:
         break;
-    case ALLOCATE_TIMESTAMP_ERROR:
+    case E_ALLOCATE_TIMESTAMP_ERROR:
         free(e->cond);
         break;
-    case DESTROY_AND_GET_NEXT:
+    case E_DESTROY_AND_GET_NEXT:
         n = e->next;
         /* Fall Trough */
-    case DESTROY:
+    case E_DESTROY:
         free(e->cond);
         free(e->timestamp);
+        return n;
     default:
         printf("ATENTION, THE CODE %u IS NOT IMPLEMENTADED. NOTHING HAPPENS TO STRUCT", free_code);
         return NULL;
@@ -43,7 +46,7 @@ Exam* exam_free(Exam* e, unsigned char free_code) {
 
     free(e);
 
-    return NULL;
+    return n;
 }
 
 
@@ -58,7 +61,7 @@ Exam* exam_create(const unsigned int id, const unsigned int xr_id, const unsigne
 
     e->timestamp = (TM*)malloc(sizeof(TM));
     if(IsNull(e->timestamp)) {
-        exam_free(e, ALLOCATE_TIMESTAMP_ERROR);
+        exam_free(e, E_ALLOCATE_TIMESTAMP_ERROR);
         perror("CREATE TIMESTAMP");
         exit(MEMORY_ERROR);
     }
@@ -68,6 +71,8 @@ Exam* exam_create(const unsigned int id, const unsigned int xr_id, const unsigne
     e->p_id = p_id;
     condition_copy(e->cond, cond);
     *(e->timestamp) = *timestamp;
+
+    return e;
 }
 
 

@@ -18,9 +18,12 @@
 
 TM* get_current_time() {
     time_t t;
+    TM* tw;
 
     time(&t);
-    return localtime(t);
+    tw = localtime(t);
+
+    return tw;
 }
 
 
@@ -34,9 +37,12 @@ void add_patient(PatientQueue* pq, const unsigned int id) {
 }
 
 XRMM* create_xrmm() {
+    XRMM* xrmm;
     int machines_id[] = XRAY_MACHINES_ID;
 
-    return xrmm_create(XRAY_MACHINE_NUMBER, machines_id);
+    xrmm = xrmm_create(XRAY_MACHINE_NUMBER, machines_id);
+
+    return xrmm;
 }
 
 unsigned int first_patient_id(const PatientQueue* pq) {
@@ -81,6 +87,8 @@ void simulation() {
             e = exam_create(exam_id, xrmmDealloOut_get_mid(xrmm_output), xrmmDealloOut_get_pid(xrmm_output), ia_output(), get_current_time());
 
             db_insert(e, DATA_BASE_EXAM_NAME);
+
+            examqueue_insert(eq, e);
         }
 
         /* Analisys by Medic */

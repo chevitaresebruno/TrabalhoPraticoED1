@@ -35,14 +35,14 @@ void pq_free(PatientQueue* pq) {
     p = pq->first;
 
     while (IsNotNull(p))
-        p = patient_free(p, RETURN_NEXT_AND_DESTROY);
+        p = patient_free(p, P_RETURN_NEXT_AND_DESTROY);
     
     /* It check's if the queue is broken. If this occurs, the program will likely have a memory leak. */
     if(IsNotNull(pq->last)) {
         unsigned int j = 0;
         p = pq->last;
         while (IsNotNull(p)){
-            p = patient_free(p, RETURN_NEXT_AND_DESTROY);
+            p = patient_free(p, P_RETURN_NEXT_AND_DESTROY);
             j++;
         }
         
@@ -118,7 +118,7 @@ void pq_remove_free(PatientQueue* pq) {
     pq->size--;
     patient_set_next(pq->first, patient_get_next_ptr(p));
 
-    patient_free(p, DESTROY);
+    patient_free(p, P_DESTROY);
 }
 
 

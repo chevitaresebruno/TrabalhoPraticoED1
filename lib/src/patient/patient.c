@@ -38,18 +38,18 @@ Patient* patient_free(Patient* p, const unsigned char free_code) {
     
     switch (free_code)
     {
-    case ALLOCATE_NAME_ERROR:
+    case P_ALLOCATE_NAME_ERROR:
         break;
     
-    case ALLOCATE_TIMESTAMP_ERROR:
+    case P_ALLOCATE_TIMESTAMP_ERROR:
         free(p->name);
         break;
 
-    case RETURN_NEXT_AND_DESTROY:
+    case P_RETURN_NEXT_AND_DESTROY:
         n = p->next;
         /* Fall trough */
     
-    case DESTROY:
+    case P_DESTROY:
         free(p->tm);
         free(p->name);
         break;
@@ -77,7 +77,7 @@ Patient* patient_create(const unsigned int p_id, const char* p_name, const TM* t
     
     p->name = (char*)malloc(sizeof(char)*strlen(p_name));
     if(IsNull(p->name)) {
-        patient_free(p, ALLOCATE_NAME_ERROR);
+        patient_free(p, P_ALLOCATE_NAME_ERROR);
         
         perror("CREATE PATIENT NAME");
         exit(MEMORY_ERROR);
@@ -85,7 +85,7 @@ Patient* patient_create(const unsigned int p_id, const char* p_name, const TM* t
 
     p->tm = (TM*)malloc(sizeof(TM));
     if(IsNull(p->tm)) {
-        patient_free(p, ALLOCATE_TIMESTAMP_ERROR);
+        patient_free(p, P_ALLOCATE_TIMESTAMP_ERROR);
 
         perror("CREATE PATIENT TIMESTAMP");
         exit(MEMORY_ERROR);

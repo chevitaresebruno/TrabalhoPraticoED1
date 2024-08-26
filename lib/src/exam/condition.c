@@ -3,10 +3,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "lib/.extern/cjson/cJSON.h"
-
 #include "lib/.conf/env.h"
 #include "lib/include/shared.h"
+
+#include "lib/include/.extern/cjson/cJSON.h"
 
 #include "lib/include/exam/condition.h"
 
@@ -62,7 +62,7 @@ Condition* condition_create(const char* name, const double prob, const int sev) 
 }
 
 void condition_copy(Condition* dest, const Condition* src) {
-    dest = condition_create(src->name, src->prob, src->name);
+    dest = condition_create(src->name, src->prob, src->sev);
 }
 
 

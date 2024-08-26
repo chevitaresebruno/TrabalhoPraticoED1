@@ -9,7 +9,9 @@
 
 typedef enum bool {FALSE, TRUE} BOOL;
 
+typedef struct cJSON cJSON;
 typedef struct tm TM;
+
 typedef struct patient Patient;
 typedef struct pq PatientQueue;
 typedef struct xrmm XRMM;

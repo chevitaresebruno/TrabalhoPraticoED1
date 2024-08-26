@@ -20,18 +20,25 @@ struct examQueue
 
 void examqueue_free(ExamQueue* eq) {
     Exam* e;
+    register int i;
 
     e = eq->fe;
 
     while (e)
-        e = exam_free(e, DESTROY_AND_GET_NEXT);
+        e = exam_free(e, E_DESTROY_AND_GET_NEXT);
     
-    for(register unsigned int i = 0; i < condition_how_much(); i++)
+    for(i = 0; i < condition_how_much(); i++)
         free(eq->lepp[i]);
 }
 
 ExamQueue* examqueue_create() {
     ExamQueue* eq;
+
+    eq = (ExamQueue*)malloc(sizeof(ExamQueue));
+    if(IsNull(eq)) {
+        perror("MEMORY ERROR; ALOCATE NEW EXAM_QUEUE");
+        exit(MEMORY_ERROR);
+    }
 
     eq->fe = NULL;
     eq->lepp = (Exam**)malloc(exam_sizeof()*condition_how_much());
@@ -44,16 +51,19 @@ ExamQueue* examqueue_create() {
     return eq;
 }
 
-void examqueue_insert(ExamQueue* eq, const Exam* e, const int p) {
+void examqueue_insert(ExamQueue* eq, Exam* e) {
     Exam* last;
+    unsigned char sev;
+
+    sev = condition_get_sev(exam_get_condition_ptr(e));
 
     assert(IsNull(eq));
     assert(IsNull(e));
-    assert(p <= 0);
+    assert(sev <= 0);
 
-    last = eq->lepp[p-1];
+    last = eq->lepp[sev-1];
     exam_set_next(last, e);
-    eq->lepp = e;
+    eq->lepp[sev-1] = e;
 }
 
 
