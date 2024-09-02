@@ -38,5 +38,6 @@ Gerencia a fila de pacientes. Optou-se pela estrutura de Fila, pois seu funciona
 Assim como patientQueue, essa lista armazena informações de exames (dentro do cógico ficou como Report, mas para lógica dele exames e reports são a mesma coisa, a diferença é o momento onde ele é utilizado). No entanto, esse lista está ordenada mediante uma priorirade, estabelecida pela condição do paciente. A estrutura de examQueue contém como atributos "firts", que salva o primeiro paciente da fila, e "last_per_p", que salva o último elemento de pioridade em um vetor de Reports. Assim fizemos, pois, ao considerarmos uma estrutura de lista simplesmente encadeada, definir a posição de um novo elemento exige percorrer elemento a elemento e verificar a sua gravidade. Da forma como foi implementada, no entanto, basta acessar o último elemento da prioridade desejada e substituir o valor.
 
 ### medicManager
-    Essa estrutura é usada para gerenciar o médico. No caso, se ele ainda está, ou não, avaliando um exame.
+
+Essa estrutura é usada para gerenciar o médico. No caso, se ele ainda está, ou não, avaliando um exame.
 
