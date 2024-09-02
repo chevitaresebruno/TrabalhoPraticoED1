@@ -1,0 +1,12 @@
+.vscode
+*.o
+*.exe
+*.pub
+*.txt
+*.bat
+*.sh
+
+output/
+tests/
+test/
+test.c
