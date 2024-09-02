@@ -61,12 +61,15 @@ void add_exam(ExamQueue* eq, xrMachineOutput* xrmo, int* e_id, int i)
 void simulation_relaotry(int id_p, int pq_size, int e_id, int r_id, int tml, int num_laudos, int tempo_laudo)
 {
     system("clear");
-    printf("Pacientes que visitaram o hospital: %d\nPacientes na fila: %d\nExames ja realizados: %d\nPercentual com laudo: %.2f%%\nTempo medio de laudo: %.2f UT\nTempo médio de laudo por %s: %f\n", id_p, pq_size, e_id, ((double)r_id)/e_id * 100, ((double)tml) / r_id, CONDITION_TRACKER, ((double)tempo_laudo) / num_laudos);
+    printf("Pacientes que visitaram o hospital: %d\nPacientes na fila: %d\nExames ja realizados: %d\nPercentual com laudo: %.2f%%\nTempo medio de laudo: %.2f UT\nTempo médio de laudo por %s: %.2f UT\n", id_p, pq_size, e_id, ((double)r_id)/e_id * 100, ((double)tml) / r_id, CONDITION_TRACKER, ((double)tempo_laudo) / num_laudos);
+
+    sleep(2);
 }
 
 
 int main() {
     int i;
+    int extra = 0;
     int patient_id;
     int xrm_ids[] = {1, 2, 3, 4, 5};
     int exam_id;
@@ -91,7 +94,7 @@ int main() {
     m = medic_create();
 
 
-    srand(0);
+    srand(time(NULL));
     db_create_patient();
     db_create_exam();
     db_create_report();
@@ -133,14 +136,12 @@ int main() {
             db_insert_report(rep, medic_report(m), rep_id, get_current_time(), i);
         }
         
-        if(i % 432 == 0)
+        if(i % 4320 == 0)
             simulation_relaotry(patient_id, pq_get_size(pq), exam_id, rep_id, tempo_medio_exam, num_de_laudos, tempo_meio_laudo);
     }
     
     
     simulation_relaotry(patient_id, pq_get_size(pq), exam_id, rep_id, tempo_medio_exam, num_de_laudos, tempo_meio_laudo);
-    printf("\n%d - %d", num_de_laudos, tempo_meio_laudo);
-    printf("Exames em hora extra\n");
 
     while(pq_get_size(pq) || !xrmm_is_empty(xrmm) || eq_get_size(eq) || medic_get_time(m))
     {
@@ -164,11 +165,13 @@ int main() {
         if(medic_dealloc(m))
         {
             rep_id++;
+            extra ++;
             db_insert_report(rep, medic_report(m), rep_id, get_current_time(), i);
         }
         i++;
     }   
 
+    printf("Laudos realizados em hora extra: %d \n", extra);
 
     fclose(pat);
     fclose(exa);
