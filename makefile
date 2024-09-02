@@ -1,25 +1,40 @@
-PROJECT_NAME=mainFile
+# My second makefile
+
+# Name of the project
+PROJ_NAME=main.exe
+
+# .c files
+C_SOURCE=$(wildcard *.c)
+
+# .h files
+H_SOURCE=$(wildcard *.h)
+
+# Object files
+OBJ=$(C_SOURCE:.c=.o)
+
+# Compiler
 CC=gcc
-CC_FLAGS=-c -W -Wall -ansi -pedantic
 
-all: lib $(PROJECT_NAME)
+# Flags for compiler
+CC_FLAGS=-c         \
+         -W         \
+         -Wall      \
+         -ansi      \
+         -pedantic
 
-lib: patient.o patientQueue.o db.o simulation.o
+#
+# Compilation and linking
+#
+all: $(PROJ_NAME)
 
-patient.o: lib/src/patient/patient.c lib/include/shared.h lib/include/patient/patient.h
-	$(CC) -o lib/bin/patient.o lib/src/patient/patient.c $(CC_FLAGS)
+$(PROJ_NAME): $(OBJ)
+	$(CC) -o $@ $^
 
-patientQueue.o: lib/src/patient/patientQueue.c lib/include/shared.h lib/include/patient/patientQueue.h
-	$(CC) -o lib/bin/patientQueue.o lib/src/patient/patientQueue.c $(CC_FLAGS)
+%.o: %.c %.h
+	$(CC) -o $@ $< $(CC_FLAGS)
 
-db.o: lib/src/db/db.c env.h lib/include/shared.h lib/include/db/db.h
-	$(CC) -o lib/bin/db.o lib/src/db/db.c $(CC_FLAGS)
+main.o: main.c $(H_SOURCE)
+	$(CC) -o $@ $< $(CC_FLAGS)
 
-simulation.o: lib/src/simulation/simulation.c env.h lib/include/shared.h lib/include/simulation/simulation.h
-	$(CC) -o lib/bin/simulation.o lib/src/simulation/simulation.c $(CC_FLAGS)
-
-$(PROJECT_NAME): mainFile.o
-	$(CC) -o $(PROJECT_NAME).exe lib/bin/mainFile.o lib/bin/patient lib/bin/patientQueue lib/bin/db lib/bin/simulation
-
-mainFile.o: main.c env.h lib/include/shared.h
-	$(CC) -o lib/bin/mainFile.o main.c $(CC_FLAGS)
+clean:
+	rm -rf *.o *.exe $(PROJ_NAME) *~
