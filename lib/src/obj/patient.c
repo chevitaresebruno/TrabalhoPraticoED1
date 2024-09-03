@@ -9,7 +9,7 @@
 
 struct patient
 {
-    int id;
+    ID id;
     char* name;
     struct tm* time;
     Patient* next;

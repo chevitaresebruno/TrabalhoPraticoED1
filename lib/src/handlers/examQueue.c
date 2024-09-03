@@ -53,7 +53,7 @@ QueueSize eq_get_size(const ExamQueue* eq)
 
 void eq_insert(ExamQueue* eq, Exam* e)
 {
-    register int i;
+    int i;
     
     if(eq == NULL || e == NULL)
         return;

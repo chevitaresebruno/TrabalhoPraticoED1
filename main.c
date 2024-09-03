@@ -134,7 +134,7 @@ int main() {
     int exam_extra_time;
 
     PatientQueue* pq;
-    xrMachineManager* xrmm;
+    XRMachineManager* xrmm;
     xrMachineOutput* xrmo;
     ExamQueue* eq;
     Medic* m;

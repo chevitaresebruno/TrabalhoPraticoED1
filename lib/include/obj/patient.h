@@ -5,7 +5,7 @@
         Patient is a struct that represents a patient record in a database as a Simple Chained List.
 
     Attributes:
-        int id -> Patient's ID;
+        ID id -> Patient's ID;
         char* name -> Pointer to the patient's name;
         struct tm* time -> Pointer to a struct tm that stores the time the patient arrived at the hospital; and
         Patient* next -> Pointer to the next element in the list.

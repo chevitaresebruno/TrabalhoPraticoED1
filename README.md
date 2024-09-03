@@ -98,5 +98,110 @@ Por fim, a pasta de adt possui TAD que são úteis, mas não são descritos dent
 A nível de implementação, é importante destacar que os arquivos na pasta adt são independentes. Isto é, não dependem de nada mais do que sua própria estrutura. Já objetos tendem a não depender de mais nada, mas podem depender de algum arquivo da pasta adt. Por fim, os objetos não dependem de handlers, mas estes comumente dependem de um objeto ou arquivo da pasta adt.
 
 ### Arquivo shared.h
+A pasta `include` possui um arquivo chamado shared.h. Nele, são definidos algumas coisas úteis em todos os módulos. Não é um arquivo fundamental, serve somente para deixar as estruturas mais elegantes dentro do contexto dos códigos. Por exemplo, um tipo `ID` é um inteiro de valor somente positivo, logo unsigned int. Para não ficar escrevendo isso sempre, nomeamos esse conjunto de ID, tornando o código mais legível.
+
+### Sobre a Documentação e Padrões
+Toda a documentação dos módulos foi feita nos arquivos .h. Os arquivos .c só vão possuir "docs strings" caso as funções, ou estruturas, sejam privadas (não estejam mencionadas nos arquivos .h).
+
+Por padrão, todo arquivo contém um nome em letras minúsculas. Os arquivos .c iniciam, após as importações, com a estrutura definida com letras minúsculas. Na sequência, seguem as funções associadas à estrutura, seguindo o padrão `nomeDaEstrutura_verbo_complemento`, onde um verbo é uma ação a ser executada e o complemento é opcional. Os arquivos .h, por sua vez, iniciam definindo a estrutura do arquivo como a mesma estrutura, mas letras separadas entre palavras em maiúsculo, iniciando em maiúsculu (exemplo, o termo `xrmm` é uma abreviação para X-Ray Machine Manager, então no arquivo xrmm.c tem-se `struct xrmm` e no arquivo xrmm.h tem-se `typedef struct xrmm XRMachineManager`).
+
+Ainda nos arquivos .h, tem-se as docstrings das estruturas e funções. Cada uma possui um padrão, conforme evidênciado abaixo:
+
+**Estrturas**
+
+    Feature:
+        Explicação da estrutura.
+    
+    Attributes:
+        Definição e explicação dos atributos públicos da estrutura, ou seja àqueles que possuem função de "Get".
+    
+    Verbs:
+        Conjunto de verbos associados à estrutura e suas respectivas funções.
+
+    typedef struct estrutura Estrutura;
+
+
+**Funções**
+    
+    Feature:
+        Explicação breve do funcionamento da função. Só existe caso a função não tenha verbo associado.
+
+    Verb:
+        Verbo que aquela função utiliza. Não existe caso Feature seja descrita.
+
+    Feature Complement:
+        Explicação adicional sobre o funcionamento da função (opcional).
+    
+    Args:
+        Explicação de cada argumento função (opcional).
+    
+    Return:
+        Informa o valor retornado (Opcional).
+
 
 ## Principais Tipos Abstratos de Dados
+Dentro do contexto da simulação, diversos tipos abstratos de dados foram implementados. Como anteriormente explicado, os TAD's possuem 4 categorias, mas as mais importantes são os objetos e os handlers. E são neles que vamos focar.
+
+### Objetos
+Os objetos são estruturas com presentação no Banco de Dados. Dentro desse contexto, temos os objetos Patient, Exam e Laudo. Todos os objetos possuem os seguintes verbos:
+
+        Create -> Cira um novo elemento daquele tipo;
+        Get -> Pega um atributo do elemento;
+        Set -> Coloca um valor específico em um atributo; e
+        Free -> Libera memória alocada dinâmicamente para a estrutura.
+
+Abaixo, segue uma pequena descrição de cada estrutura:
+
+    Patient
+    
+        Representa um Paciente no banco de dados como uma lista simplesmente encadeada. A decisão de implementar a estrutura como lista simplesmente encadeada é para reduzir a generalidade do código e tornar a implementação mais simples (o mais correto a nível de arquitetura é ter uma estrutura lista cujos elementos internos são nós, mas preferimos evitar um pouco de trabalho).
+
+        Verbos Definidos: Create, Get, Set e Free.
+
+    Exam
+
+        Representa um Exame no banco de dados como uma lista simplesmente encadeada. A decisão de implementar a estrutura como lista simplesmente encadeada é para reduzir a generalidade do código e tornar a implementação mais simples (o mais correto a nível de arquitetura é ter uma estrutura lista cujos elementos internos são nós, mas preferimos evitar um pouco de trabalho).
+
+        Verbos Definidos: Create, Get, Set e Free.
+
+    Report
+
+        Representa um Laudo no banco de dados.
+
+        Verbos Definidos: Create, Get e Free.
+    
+
+### Handlers
+Handlers são estruturas que manipulam outras estruturas ou processos. No caso do sistema, os dois principais Handlers são: Patient Queue e Exam Queue. O primeiro, controla a lista de chegada de pacientes no hospital, enquanto o segundo gerencia o total de exames em aguardo para receber um laudo, considerando a sua prioridade após sair da IA. Os Hadnlers, possuem os eguintes verbos associados:
+
+        Create -> Cria uma nova estrutura;
+        Get -> Pega um atributo de um elemento;
+        Insert -> Insere uma estrutura em uma lista;
+        Remove -> Remove uma estrutura de uma lista;
+        Alloc -> Aloca uma estrutura em um processo;
+        Dealloc -> Desaloca uma estrutura ao final de um processo.
+        Check -> Verifica uma condição.
+
+Abaixo, segue uma explicação sobre o Handler patientQueue:
+
+    PatientQueue
+        
+        Feature:
+            Estrutura reponsável por ordenar a lista de pacientes aguardando um exame na lista. Os pacitentes novos são inseridos ao final da lista e os primeiros a erem removidos são os mais antigos. A estrutura comporta-se como uma fila, seguinte o princípio FIFO (First in, Firts out).
+        
+        Verbos Associados: Create, Get, Insert e Remove.
+
+
+#### Exam Queue
+A seguinte estrutura merece um tópico só para ela por ser consideravelmente mais complexa do que a anterior. Essa lista também é uma fila simplesmente encadeada, no entanto os elementos são inseridos de acordo com uma prioriade. Por consequência, os elementos saem de acordo com uma prioriade.
+
+A solução óbivia é tratar a fila como uma lista simplesmente encadeada e onde ao inserir um valor nela, o códgo busca pelo último elemento daquela condição e então insere um novo exame ao final. O problema dessa abordagem é o consumo de processamento em uma fila superlotada.
+
+Para corrigir esse problema e ganhar mais performance, definiu-se que a lista armazena cada último elemento de uma prioridade específica. Assim, ao inserir um novo elemento na lista, basta acessar aquele elemento em particurlar. 
+
+    ExamQueue
+
+        Feature:
+            Estrutura reponsável por ordenar a lista de exames aguardando um laudo, seguindo uma ordem de prioridade.
+        
+        Verbos Associados: Create, Get, Insert e Remove.

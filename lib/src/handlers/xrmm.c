@@ -23,15 +23,15 @@ struct xrmm
 };
 
 
-xrMachineManager* xrmm_create(const int size, const ID* xrm_ids)
+XRMachineManager* xrmm_create(const int size, const ID* xrm_ids)
 {
-    xrMachineManager* xrmm;
+    XRMachineManager* xrmm;
     register int i;
 
     if(!size)
         return NULL;
     
-    xrmm = (xrMachineManager*)malloc(sizeof(xrMachineManager));
+    xrmm = (XRMachineManager*)malloc(sizeof(XRMachineManager));
     if(xrmm == NULL)
         return NULL;
 
@@ -67,7 +67,7 @@ xrMachineManager* xrmm_create(const int size, const ID* xrm_ids)
 }
 
 
-Bool xrmm_alloc_machine(xrMachineManager* xrmm, const ID p_id)
+Bool xrmm_alloc_machine(XRMachineManager* xrmm, const ID p_id)
 {
     register int mn;
 
@@ -92,7 +92,7 @@ Bool xrmm_alloc_machine(xrMachineManager* xrmm, const ID p_id)
     Feature Complements:
         This function delloc machine and time count every machine slots. We prefered use it other create a function to time count to get better performance.
 */
-xrMachineOutput* xrmm_dealloc_machie(xrMachineManager* xrmm)
+xrMachineOutput* xrmm_dealloc_machie(XRMachineManager* xrmm)
 {
     xrMachineOutput* xrmo;
     register int mn;
@@ -112,7 +112,7 @@ xrMachineOutput* xrmm_dealloc_machie(xrMachineManager* xrmm)
 }
 
 
-Bool xrmm_check_isEmpty(const xrMachineManager* xrmm)
+Bool xrmm_check_isEmpty(const XRMachineManager* xrmm)
 {
     register int i;
 
