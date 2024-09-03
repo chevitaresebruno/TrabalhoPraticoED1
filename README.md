@@ -77,20 +77,26 @@ Após a compilação do projeto, um arquivo, definido por padrão como `main.exe
 
 
 ## Compreendendo a Estrutura do Projeto
-### xrMachineManager
+O projeto está bastante fragmentado. Isso decorre da necessidade de organizar os mais de 16 arquivos totais que o projeto tem em seu final. Assim, toda uma estrutura de divisões e subdiviões foram criadas para organizar o projeto.
 
-Gerencia as máquinas de exame disponíveis no hospital. Responsável por alocar e liberar máquinas de raio-x para os exames.
+### Pasta root
+A pasta principal do projeto possui alguns arquivos importantes. O principal é o `main.c`, o qual contém o loop principal da simulação. Além dele, ao executar arquivo executável será gerada uma pasta `output`, a aqual contém o banco de dados gerado pelo programa. Por fim, há a pasta lib, a qual separa todos os módulos criados pelo projeto.
 
-### patient
-Representa um paciente no sistema. Armazena as informações de ID e nome, como uma lista simplesmente encadeada.
 
-### patientQueue
-Gerencia a fila de pacientes. Optou-se pela estrutura de Fila, pois seu funcionamento FIFO (Firs in, First Out) é o exigido no contexto do hospital.
+### Pasta lib
+A pasta `lib` armazena todos os códigos do projeto. A pasta `bin` é responsável por manter todos os arquivos .o gerados pela receita `all`. A pasta `include`, por sua vez, armazena os arquivos .h dos módulos .c, os quais são armazenados na pasta `src`.
 
-### examQueue
-Assim como patientQueue, essa lista armazena informações de exames (dentro do cógico ficou como Report, mas para lógica dele exames e reports são a mesma coisa, a diferença é o momento onde ele é utilizado). No entanto, esse lista está ordenada mediante uma priorirade, estabelecida pela condição do paciente. A estrutura de examQueue contém como atributos "firts", que salva o primeiro paciente da fila, e "last_per_p", que salva o último elemento de pioridade em um vetor de Reports. Assim fizemos, pois, ao considerarmos uma estrutura de lista simplesmente encadeada, definir a posição de um novo elemento exige percorrer elemento a elemento e verificar a sua gravidade. Da forma como foi implementada, no entanto, basta acessar o último elemento da prioridade desejada e substituir o valor.
+### Divisão dos Módulos
+A pasta `src` e `include` são idênticas no quesito de estrutura. Elas determinam as categorias de `scripts` que o projeto possui. No total, pode-se dividir a estrutura em 4 categorias: objects (pasta `obj`), `handlers`, coisas que eu não sei o nome (pasta `adt`, Abstract Data Type) e módulos úteis (pastas `ai` e `db`).
 
-### medicManager
+As pastas `ai` e `db` guardam os scripts ai.c e db.c, respectivamente. Eles estão em pastas separadas, pois, possuem funcionamento específico dentro da simulação mas não tinhamos uma pasta com um bom nome para eles, então os jogamos em pastas próprias separadas.
 
-Essa estrutura é usada para gerenciar o médico. No caso, se ele ainda está, ou não, avaliando um exame.
+Entende-se por objeto, tudo no sistema que será armazenado no banco de dados. Assim, pacientes, exames e laudos são entendidos como scripts específicos, com recuros específicos e atributos que o representem no banco de dados. Por sua vez, handlers são scripts que manipulam outras estruturas, sejam objetos ou outros TAD's.
 
+Por fim, a pasta de adt possui TAD que são úteis, mas não são descritos dentro do contexto das especificações. No entanto, fazem sentido serem estruturas e tornam todo o processo mais simples e também mais intuitivo.
+
+A nível de implementação, é importante destacar que os arquivos na pasta adt são independentes. Isto é, não dependem de nada mais do que sua própria estrutura. Já objetos tendem a não depender de mais nada, mas podem depender de algum arquivo da pasta adt. Por fim, os objetos não dependem de handlers, mas estes comumente dependem de um objeto ou arquivo da pasta adt.
+
+### Arquivo shared.h
+
+## Principais Tipos Abstratos de Dados
